@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Any
 
-from src.clients.base_http_client import BaseHTTPClient
+from src.http.base_http_client import BaseHTTPClient
 from src.common.constants import IP_API_HOST
 
 

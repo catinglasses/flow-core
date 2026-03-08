@@ -1,5 +1,5 @@
 [project]
-name = "orion-core"
+name = "flow-core"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -9,4 +9,7 @@ dependencies = [
     "pydantic>=2.12.5",
     "ruff>=0.15.1",
     "sqlalchemy>=2.0.46",
+]
+authors = [
+    {name = "Saveliy Efimov (aka catinglasses)"},
 ]
