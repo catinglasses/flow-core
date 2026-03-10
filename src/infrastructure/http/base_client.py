@@ -103,7 +103,7 @@ class BaseHTTPClient:
             aiohttp.ClientResponse: The raw response object.
         """
 
-        url = f'{self._base_url}/{path.lstrip('/')}'
+        url = f'{self._base_url}/{path.lstrip("/")}'
         headers: dict[str, Any] = {
             **self._default_headers,
             **self._get_auth_headers(),
