@@ -15,6 +15,7 @@ authors = [
 
 [dependency-groups]
 dev = [
+    "import-linter>=2.11",
     "mypy>=1.20.2",
     "pre-commit>=4.6.0",
     "ruff>=0.15.1",
@@ -145,3 +146,19 @@ disallow_untyped_decorators = true
 plugins = ["pydantic.mypy", "sqlalchemy.ext.mypy.plugin"]
 
 exclude = "alembic"
+
+
+[tool.importlinter]
+root_package = "src"
+
+[[tool.importlinter.contracts]]
+name = "domain/ shouldn't depend on infrastructure/"
+type = "forbidden"
+source_modules = ["src.domain"]
+forbidden_modules = ["src.infrastructure"]
+
+[[tool.importlinter.contracts]]
+name = "common/ shouldn't depend on infrastructure/ or domain/"
+type = "forbidden"
+source_modules = ["src.common"]
+forbidden_modules = ["src.infrastructure", "src.domain"]

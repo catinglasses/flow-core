@@ -24,3 +24,15 @@ repos:
         args: [ --fix, '--config', 'pyproject.toml']
       - id: ruff-format
         args: ['--config', 'pyproject.toml']
+  - repo: local
+    hooks:
+      - id: import-linter
+        name: import-linter
+        entry: bash -c 'set -o pipefail && lint-imports | awk "/Broken contracts/{flag=1} flag"'
+        language: system
+        files: ^src/
+        pass_filenames: false
+        always_run: true
+        stages:
+          - pre-commit
+          - pre-push
