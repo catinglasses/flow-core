@@ -3,6 +3,7 @@ from typing import Generic, TypeVar
 
 C = TypeVar('C')
 
+
 class Step(ABC, Generic[C]):
     @abstractmethod
     async def execute(self, context: C) -> C:

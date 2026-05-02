@@ -7,9 +7,141 @@ requires-python = ">=3.12"
 dependencies = [
     "aiohttp>=3.13.3",
     "pydantic>=2.12.5",
-    "ruff>=0.15.1",
     "sqlalchemy>=2.0.46",
 ]
 authors = [
     {name = "Saveliy Efimov (aka catinglasses)"},
 ]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.20.2",
+    "pre-commit>=4.6.0",
+    "ruff>=0.15.1",
+]
+
+[tool.ruff]
+line-length = 120
+
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+    ".github",
+    "alembic/*",
+    "scripts/*",
+    "src/db/manager.py",
+    "tests",
+]
+include = ["*.py"]
+
+respect-gitignore = false
+fix = true
+indent-width = 4
+output-format = "grouped"
+show-fixes = false
+unsafe-fixes = false
+
+
+[tool.ruff.format]
+docstring-code-format = true
+indent-style = 'space'
+line-ending = 'auto'
+quote-style = 'single'
+skip-magic-trailing-comma = false
+
+
+[tool.ruff.lint]
+# list of rules: https://docs.astral.sh/ruff/rules
+
+select = [
+    "E",        # pycodestyle ERRORS https://docs.astral.sh/ruff/rules/#error-e
+    "F",        # Pyflakes https://docs.astral.sh/ruff/rules/#pyflakes-f
+    "W",        # pycodestyle WARNINGS https://docs.astral.sh/ruff/rules/#warning-w
+    "I",        # isort https://docs.astral.sh/ruff/rules/#isort-i
+    "ANN",      # flake8-annotations https://docs.astral.sh/ruff/rules/#flake8-annotations-ann
+    "COM",      # flake8-commas https://docs.astral.sh/ruff/rules/#flake8-commas-com
+    "C4",       # flake8-comprehensions https://docs.astral.sh/ruff/rules/#flake8-comprehensions-c4
+    "RET",      # flake8-return https://docs.astral.sh/ruff/rules/#flake8-return-ret
+    "SIM",      # flake8-simplify https://docs.astral.sh/ruff/rules/#flake8-simplify-sim
+    "TID252",   # Prefer absolute imports over relative imports from parent modules
+    # "N",        # PEP8-naming https://docs.astral.sh/ruff/rules/#pep8-naming-n
+    "RUF013",   # PEP 484 prohibits implicit Optional
+    "RUF019",   # Unnecessary key check before dictionary access replaced with dict get()
+    "RUF021",   # Parenthesize a and b expressions when chaining and and or together, to make the precedence clear
+    "RUF051",   # Use pop instead of key in dict followed by del dict[key]
+]
+
+ignore = [
+    "C401",    # Unnecessary generator (rewrite using set())
+    "C403",    # Unnecessary list comprehension (rewrite as a set comprehension)
+    "C408",    # Unnecessary {kind}() call (rewrite as a literal)
+    "C417",    # Unnecessary map() usage (rewrite using a {object_type})
+    "C419",    # Unnecessary list comprehension
+
+    "ANN001",  # Missing type annotation for function argument {name}
+    "ANN401",  # Dynamically typed expressions (typing.Any) are disallowed in {name}
+
+    "RET504",  # Unnecessary assignment to {name} before return statement
+    "RET505",  # Unnecessary {branch} after return statement
+    "RET506",  # Unnecessary {branch} after raise statement
+    "RET507",  # Unnecessary {branch} after continue statement
+
+    "COM812",  # Formatter conflicts / Trailing comma missing
+    "COM818",  # Trailing comma on bare tuple prohibited
+
+    "SIM101",  # Multiple isinstance calls for {name}, merge into a single call
+    "SIM102",  # Use a single if statement instead of nested if statements
+    "SIM103",  # Return the condition {condition} directly
+    "SIM105",  # Use contextlib.suppress({exception}) instead of try-except-pass
+    "SIM108",  # Use ternary operator {contents} instead of if-else-block
+    "SIM118",  # Use key {operator} dict instead of key {operator} dict.keys()
+    "SIM202",  # Use {left} == {right} instead of not {left} != {right}
+
+    "F601",    # Dictionary key literal {name} repeated
+]
+
+fixable = ["ALL"]
+
+[tool.ruff.lint.isort]
+case-sensitive = true
+combine-as-imports = true
+split-on-trailing-comma = false
+
+
+[tool.mypy]
+disallow_any_generics = true
+disallow_subclassing_any = true
+
+disallow_untyped_calls = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+
+plugins = ["pydantic.mypy", "sqlalchemy.ext.mypy.plugin"]
+
+exclude = "alembic"

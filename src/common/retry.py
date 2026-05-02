@@ -22,5 +22,5 @@ class RetryPolicy:
         return isinstance(exception, self.retryable_exceptions)
 
     async def wait(self, attempt: int) -> None:
-        wait_time = self.delay * (self.backoff ** attempt)
+        wait_time = self.delay * (self.backoff**attempt)
         await sleep(wait_time)

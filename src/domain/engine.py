@@ -6,6 +6,7 @@ from src.domain.interfaces.step import Step
 
 C = TypeVar('C')
 
+
 class WorkflowEngine(Generic[C]):
     def __init__(
         self,
@@ -22,9 +23,8 @@ class WorkflowEngine(Generic[C]):
         step: Step[C],
         context: C,
     ) -> C:
-        last_exception = None
+        last_exception: Exception | None = None
         for attempt in range(self._retry_policy.max_retries):
-
             try:
                 if self._step_timeout is not None:
                     return await asyncio.wait_for(
@@ -35,18 +35,12 @@ class WorkflowEngine(Generic[C]):
 
             except asyncio.TimeoutError as e:
                 last_exception = e
-                if (
-                    not self._retry_policy.is_retriable(e) or
-                    attempt == self._retry_policy.max_retries - 1
-                ):
+                if not self._retry_policy.is_retriable(e) or attempt == self._retry_policy.max_retries - 1:
                     raise
 
             except Exception as e:
                 last_exception = e
-                if (
-                    not self._retry_policy.is_retriable(exception=e) or
-                    attempt == self._retry_policy.max_retries - 1
-                ):
+                if not self._retry_policy.is_retriable(exception=e) or attempt == self._retry_policy.max_retries - 1:
                     raise
 
                 await self._retry_policy.wait(attempt=attempt)

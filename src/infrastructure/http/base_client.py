@@ -14,6 +14,7 @@ RequestDataType = Mapping[str, Any] | aiohttp.FormData | bytes | str | IO[Any] |
 Headers = dict[str, str]
 Params = dict[str, Any]
 
+
 class BaseHTTPClient:
     """
     Base class for stateless HTTP clients.
@@ -188,7 +189,7 @@ class BaseHTTPClient:
         if 'application/json' in content_type:
             text = await response.text()
             return self._json_deserialize(text)
-        elif 'text/' in content_type:
+        elif 'text/' in content_type:  # noqa: RET505
             return await response.text()
         else:
             return await response.read()
@@ -252,7 +253,7 @@ class BaseHTTPClient:
 
         response = await self._request_with_retry(
             session=session,
-            method="POST",
+            method='POST',
             path=path,
             data=data,
             json=json,

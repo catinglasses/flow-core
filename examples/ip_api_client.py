@@ -7,6 +7,7 @@ from src.infrastructure.http.base_client import BaseHTTPClient
 
 IP_API_HOST = 'ip-api.com'
 
+
 class IpApiLanguage(Enum):
     ENGLISH = 'en'
     RUSSIAN = 'ru'
@@ -16,6 +17,7 @@ class IpApiLanguage(Enum):
     FRENCH = 'fr'
     JAPANESE = 'ja'
     CHINESE = 'zh-CN'
+
 
 class IpApiClient(BaseHTTPClient):
     def __init__(
