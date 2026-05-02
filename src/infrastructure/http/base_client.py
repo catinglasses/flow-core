@@ -217,16 +217,16 @@ class BaseHTTPClient:
             Exceptions from _request_with_retry.
         """
 
-        resp = await self._request_with_retry(
+        response = await self._request_with_retry(
             session=session,
             method='GET',
             path=path,
             params=params,
             **kwargs,
         )
-        resp.raise_for_status()
+        response.raise_for_status()
 
-        return await self._handle_response(resp)
+        return await self._handle_response(response)
 
     async def post(
         self,
@@ -250,7 +250,7 @@ class BaseHTTPClient:
             Deserialized response data.
         """
 
-        resp = await self._request_with_retry(
+        response = await self._request_with_retry(
             session=session,
             method="POST",
             path=path,
@@ -258,9 +258,9 @@ class BaseHTTPClient:
             json=json,
             **kwargs,
         )
-        resp.raise_for_status()
+        response.raise_for_status()
 
-        return await self._handle_response(resp)
+        return await self._handle_response(response)
 
     async def put(
         self,
@@ -270,7 +270,7 @@ class BaseHTTPClient:
         json: JSONDataType = None,
         **kwargs: Any,  # noqa: ANN401
     ) -> Any:  # noqa: ANN401
-        resp = await self._request_with_retry(
+        response = await self._request_with_retry(
             session=session,
             method='PUT',
             path=path,
@@ -278,9 +278,9 @@ class BaseHTTPClient:
             json=json,
             **kwargs,
         )
-        resp.raise_for_status()
+        response.raise_for_status()
 
-        return await self._handle_response(resp)
+        return await self._handle_response(response)
 
     async def patch(
         self,
@@ -290,7 +290,7 @@ class BaseHTTPClient:
         json: JSONDataType = None,
         **kwargs: Any,  # noqa: ANN401
     ) -> Any:  # noqa: ANN401
-        resp = await self._request_with_retry(
+        response = await self._request_with_retry(
             session=session,
             method='PATCH',
             path=path,
@@ -298,9 +298,9 @@ class BaseHTTPClient:
             json=json,
             **kwargs,
         )
-        resp.raise_for_status()
+        response.raise_for_status()
 
-        return await self._handle_response(resp)
+        return await self._handle_response(response)
 
     async def delete(
         self,
@@ -308,12 +308,12 @@ class BaseHTTPClient:
         path: str,
         **kwargs: Any,  # noqa: ANN401
     ) -> Any:  # noqa: ANN401
-        resp = await self._request_with_retry(
+        response = await self._request_with_retry(
             session=session,
             method='DELETE',
             path=path,
             **kwargs,
         )
-        resp.raise_for_status()
+        response.raise_for_status()
 
-        return await self._handle_response(resp)
+        return await self._handle_response(response)

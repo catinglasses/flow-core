@@ -1,9 +1,11 @@
 from enum import Enum
 from typing import Any
 
-from src.http.base_http_client import BaseHTTPClient
-from src.common.constants import IP_API_HOST
+import aiohttp
 
+from src.infrastructure.http.base_client import BaseHTTPClient
+
+IP_API_HOST = 'ip-api.com'
 
 class IpApiLanguage(Enum):
     ENGLISH = 'en'
@@ -16,33 +18,23 @@ class IpApiLanguage(Enum):
     CHINESE = 'zh-CN'
 
 class IpApiClient(BaseHTTPClient):
-    BASE_URL = f'http://{IP_API_HOST}/json'
+    def __init__(
+        self,
+    ) -> None:
+        super().__init__(base_url=f'http://{IP_API_HOST}/json')
 
     async def get_ip_info(
         self,
         ip: str,
+        session: aiohttp.ClientSession,
         language: IpApiLanguage = IpApiLanguage.ENGLISH,
         fields: list[str] | None = None,
     ) -> dict[str, Any]:
-        async with self.session.get(
-            url=f'{self.BASE_URL}/{ip}',
+        return await self.get(
+            session=session,
+            path=ip,
             params={
                 'lang': language.value,
                 **({'fields': ','.join(fields)} if fields else {}),
             },
-        ) as response:
-            response.raise_for_status()
-            return await response.json()
-
-
-if __name__ == '__main__':
-    client = IpApiClient()
-    import asyncio
-
-    async def test() -> None:
-        async with client:
-            result = await client.get_ip_info('8.8.8.8')
-
-        print(result)
-
-    asyncio.run(test())
+        )

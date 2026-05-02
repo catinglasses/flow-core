@@ -4,6 +4,9 @@
 
 Pet-project focused on orchestrating workflows via python. Potential use cases: scenario automatization (for SOAR, SGRC systems, CRON-like routines).
 
+**IMPORTANT: WIP.**
+**README may be not up-to-date.**
+
 ## Project Structure
 
 ### Directory Tree
