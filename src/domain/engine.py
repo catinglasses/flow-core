@@ -2,6 +2,7 @@ import asyncio
 from typing import Generic, TypeVar
 
 from src.common.retry import RetryPolicy
+from src.domain.interfaces.state_storage import StateStorage
 from src.domain.interfaces.step import Step
 
 C = TypeVar('C')
@@ -12,10 +13,12 @@ class WorkflowEngine(Generic[C]):
         self,
         steps: list[Step[C]],
         retry_policy: RetryPolicy | None = None,
+        state_storage: StateStorage | None = None,
         step_timeout_seconds: float | None = None,
     ) -> None:
         self._steps = steps
         self._retry_policy = retry_policy or RetryPolicy()
+        self._state_storage = state_storage
         self._step_timeout = step_timeout_seconds
 
     async def _run_step_with_retry(
@@ -38,6 +41,8 @@ class WorkflowEngine(Generic[C]):
                 if not self._retry_policy.is_retriable(e) or attempt == self._retry_policy.max_retries - 1:
                     raise
 
+                await self._retry_policy.wait(attempt=attempt)
+
             except Exception as e:
                 last_exception = e
                 if not self._retry_policy.is_retriable(exception=e) or attempt == self._retry_policy.max_retries - 1:
@@ -47,15 +52,34 @@ class WorkflowEngine(Generic[C]):
 
         raise last_exception  # type: ignore
 
-    async def run(self, initial_context: C) -> C:
-        context = initial_context
+    async def run(self, initial_context: C, workflow_name: str | None = None) -> C:
+        if workflow_name and self._state_storage:
+            state = await self._state_storage.load(workflow_name=workflow_name)
 
-        for i, step in enumerate(self._steps):
+            if state:
+                start_index, context = state
+            else:
+                context = initial_context
+                start_index = 0
+
+        else:
+            context = initial_context
+            start_index = 0
+
+        for i, step in enumerate(self._steps[start_index:], start=start_index):
             try:
                 context = await self._run_step_with_retry(
                     step=step,
                     context=context,
                 )
+
+                if self._state_storage and workflow_name:
+                    await self._state_storage.save(
+                        workflow_name=workflow_name,
+                        step_index=i + 1,
+                        context=context,
+                    )
+
             except Exception as e:
                 raise RuntimeError(f'Step {i} failed after retries: {e}') from e
 
