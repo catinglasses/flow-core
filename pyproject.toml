@@ -20,6 +20,7 @@ dev = [
     "mypy>=1.20.2",
     "pre-commit>=4.6.0",
     "ruff>=0.15.1",
+    "types-aiofiles>=25.1.0.20260409",
 ]
 
 [tool.ruff]
