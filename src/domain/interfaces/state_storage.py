@@ -9,11 +9,9 @@ class StateStorage(ABC):
         workflow_name: str,
         step_index: int,
         context: Any,  # noqa: ANN401
-    ) -> None:
-        ...
+    ) -> None: ...
 
     async def load(
         self,
         workflow_name: str,
-    ) -> tuple[int, Any] | None:
-        ...
+    ) -> tuple[int, Any] | None: ...

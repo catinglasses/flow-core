@@ -12,14 +12,24 @@ class WorkflowEngine(Generic[C]):
     def __init__(
         self,
         steps: list[Step[C]],
+        step_timeout_seconds: float | None = None,
         retry_policy: RetryPolicy | None = None,
         state_storage: StateStorage | None = None,
-        step_timeout_seconds: float | None = None,
     ) -> None:
         self._steps = steps
+        self._step_timeout = step_timeout_seconds
         self._retry_policy = retry_policy or RetryPolicy()
         self._state_storage = state_storage
-        self._step_timeout = step_timeout_seconds
+
+    async def _handle_error_if_retriable(
+        self,
+        attempt: int,
+        exception: Exception,
+    ) -> None:
+        if not self._retry_policy.is_retriable(exception) or attempt == self._retry_policy.max_retries - 1:
+            raise
+
+        await self._retry_policy.wait(attempt=attempt)  # type: ignore
 
     async def _run_step_with_retry(
         self,
@@ -38,17 +48,14 @@ class WorkflowEngine(Generic[C]):
 
             except asyncio.TimeoutError as e:
                 last_exception = e
-                if not self._retry_policy.is_retriable(e) or attempt == self._retry_policy.max_retries - 1:
-                    raise
-
-                await self._retry_policy.wait(attempt=attempt)
+                await self._handle_error_if_retriable(attempt=attempt, exception=e)
 
             except Exception as e:
                 last_exception = e
-                if not self._retry_policy.is_retriable(exception=e) or attempt == self._retry_policy.max_retries - 1:
-                    raise
-
-                await self._retry_policy.wait(attempt=attempt)
+                await self._handle_error_if_retriable(
+                    attempt=attempt,
+                    exception=e,
+                )
 
         raise last_exception  # type: ignore
 
